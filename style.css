@@ -211,7 +211,7 @@ img {
   left: 0;
   width: 100%;
   padding: 1.4rem 0;
-  z-index: 1000;
+  z-index: 1100;
   transition: background 0.5s ease, padding 0.4s ease, box-shadow 0.4s ease;
   background: transparent;
 }
@@ -2513,12 +2513,12 @@ footer {
     left: auto;
     width: min(84vw, 340px);
     height: 100dvh;
-    background-color: var(--bg-white);
+    background: #ffffff;
     flex-direction: column;
     align-items: flex-start;
     justify-content: flex-start;
     gap: 1.1rem;
-    padding: 6.2rem 1.3rem 1.3rem;
+    padding: 1.5rem 1.3rem;
     transform: translateX(110%);
     opacity: 0;
     visibility: hidden;
@@ -2551,6 +2551,38 @@ footer {
     touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
     cursor: pointer;
+  }
+
+  .mobile-nav-header {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 1rem;
+  }
+
+  .close-menu {
+    background: none;
+    border: none;
+    font-size: 1.6rem;
+    color: var(--primary-color);
+    cursor: pointer;
+    padding: 0.5rem;
+    transition: transform 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .close-menu:hover {
+    transform: rotate(90deg);
+  }
+
+  .nav-link::after {
+    background-color: #f9c06a;
+  }
+
+  .nav-link.active {
+    color: #f9c06a !important;
   }
 
   .hero-orb {

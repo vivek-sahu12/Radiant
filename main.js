@@ -31,6 +31,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const navBackdrop = document.getElementById('nav-backdrop');
     const navbar = document.getElementById('navbar');
     const navMenuLinks = document.querySelectorAll('.nav-link');
+    const closeMenuBtn = document.getElementById('close-menu');
+
+    if (closeMenuBtn) {
+        closeMenuBtn.addEventListener('click', closeMenu);
+    }
 
     function isMobileView() {
         return window.innerWidth <= 768;
@@ -85,34 +90,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (hamburger && navList) {
-        // Fix for iOS Safari touch/click double firing.
-        let hamburgerTouchHandled = false;
-        let hamburgerIgnoreClick = false;
-
-        hamburger.addEventListener('touchstart', (e) => {
-            hamburgerTouchHandled = true;
-            e.stopPropagation();
-        }, { passive: true });
-
-        hamburger.addEventListener('touchend', (e) => {
-            if (!hamburgerTouchHandled) return;
-            hamburgerTouchHandled = false;
-            hamburgerIgnoreClick = true;
-            e.preventDefault();
-            e.stopPropagation();
-            const isOpen = navList.classList.contains('active');
-            if (isOpen) {
-                closeMenu();
-            } else {
-                openMenu();
-            }
-        });
-
         hamburger.addEventListener('click', (e) => {
-            if (hamburgerIgnoreClick) {
-                hamburgerIgnoreClick = false;
-                return; // already handled by touchend
-            }
+            e.stopPropagation(); // Prevent document click from immediately closing it
             const isOpen = navList.classList.contains('active');
             if (isOpen) {
                 closeMenu();
@@ -122,29 +101,34 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    navMenuLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
-            const targetId = this.getAttribute('href');
-            if (!targetId || !targetId.startsWith('#')) return;
-    
+    navMenuLinks.forEach((link) => {
+        link.addEventListener('click', (e) => {
+            const targetId = link.getAttribute('href');
+            if (!targetId || targetId === '#') return;
+
+            // For normal page links, close the drawer and allow browser redirect.
+            if (!targetId.startsWith('#')) {
+                if (isMobileView() && navList && navList.classList.contains('active')) {
+                    closeMenu();
+                }
+                return;
+            }
+
             const target = document.querySelector(targetId);
             if (!target) return;
-    
+
             e.preventDefault();
-    
-            // Close menu first
-            closeMenu();
-    
-            // Scroll after slight delay (IMPORTANT)
-            setTimeout(() => {
-                const headerH = navbar.offsetHeight;
-                const top = target.offsetTop - headerH;
-    
-                window.scrollTo({
-                    top: top,
-                    behavior: 'smooth'
-                });
-            }, 250);
+            const shouldDelayScroll = isMobileView() && navList && navList.classList.contains('active');
+            
+            if (shouldDelayScroll) {
+                closeMenu();
+                // Wait for the menu transition to finish before scrolling for a smoother experience
+                window.setTimeout(() => {
+                    scrollToSection(target, targetId);
+                }, 350);
+            } else {
+                scrollToSection(target, targetId);
+            }
         });
     });
 
