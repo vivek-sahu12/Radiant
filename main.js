@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const icon = hamburger.querySelector('i');
         if (icon) {
-            icon.className = isOpen ? 'fas fa-times' : 'fas fa-bars';
+            icon.className = 'fas fa-bars';
         }
     }
 

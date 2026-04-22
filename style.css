@@ -592,6 +592,7 @@ img {
 }
 
 @keyframes hero-bounce {
+
   0%,
   100% {
     transform: translateX(-50%) translateY(0);
@@ -1083,7 +1084,7 @@ img {
   font-family: var(--font-heading);
   font-size: 1.8rem;
   line-height: 1;
-  
+
 }
 
 .about-image-badge .badge-text {
@@ -1485,6 +1486,7 @@ img {
 }
 
 @media (max-width: 992px) {
+
   .event-gallery-grid,
   .event-images-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -1590,10 +1592,10 @@ img {
 }
 
 .card-img {
-  
+
   height: 200px;
   overflow: hidden;
-  
+
 }
 
 .card-img img {
