@@ -226,6 +226,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const galleryEvents = [
+        { title: 'Sport Day 25-26', folder: 'Sport Day 25-26', media: ['main.jpeg', '1.jpeg', '2.jpeg', '3.jpeg', '4.jpeg', '5.jpeg', '6.jpeg', '7.jpeg'] },
         { title: 'Deepawali Celebration', folder: 'Deepawali Celebration', media: ['main.jpeg', '1.jpeg', '2.jpeg', '3.jpeg', '4.jpeg', '5.jpeg', '6.jpeg', '7.jpeg', '8.jpeg', '9.jpeg', '10.jpeg', '11.jpeg', '12.jpeg', '13.jpeg'] },
         { title: 'Ganesh Sthapna', folder: 'Ganesh Sthapna', media: ['main.jpeg', '1.jpeg', '2.jpeg', '3.jpeg', '4.jpeg'] },
         { title: 'Green Day Celebration', folder: 'Green Day Celebration', media: ['main.jpeg', '1.jpeg', '2.jpeg', '3.jpeg', '4.jpeg', '5.jpeg', '6.jpeg', '7.jpeg'] },
@@ -233,8 +234,7 @@ document.addEventListener('DOMContentLoaded', () => {
         { title: 'Holi Celebration 25-26', folder: 'Holi Celebration 25-26', media: ['main.jpeg', '1.jpeg', '2.jpeg', '3.jpeg', '4.jpeg', '5.jpeg', '6.jpeg', '7.jpeg'] },
         { title: 'Janmashthmi Celebration', folder: 'Janmashthmi Celebration', media: ['main.jpeg', '1.jpeg', '2.jpeg', '3.jpeg', '4.jpeg', '5.jpeg', '6.jpeg', '7.jpeg', '8.jpeg', '9.jpeg', '10.jpeg'] },
         { title: 'Navratri Garba Celebration', folder: 'Navratri Garba Celebration', media: ['main.jpeg', '1.jpeg', '2.jpeg', '3.jpeg', '4.jpeg', '5.jpeg', '6.jpeg', '7.mp4'] },
-        { title: 'Republic Day', folder: 'Republic Day', media: ['main.jpeg', '1.jpeg', '2.jpeg', '3.jpeg'] },
-        { title: 'Sport Day 25-26', folder: 'Sport Day 25-26', media: ['main.jpeg', '1.jpeg', '2.jpeg', '3.jpeg', '4.jpeg', '5.jpeg', '6.jpeg', '7.jpeg'] }
+        { title: 'Republic Day', folder: 'Republic Day', media: ['main.jpeg', '1.jpeg', '2.jpeg', '3.jpeg'] }
     ];
 
     const eventGallery = document.getElementById('event-gallery');
@@ -245,6 +245,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const eventMeta = document.getElementById('event-meta');
     const eventLoading = document.getElementById('event-loading');
     const eventImagesGrid = document.getElementById('event-images');
+    const staffPhotoImage = document.querySelector('.staff-photo img');
     const lb = buildLightbox();
     const lbImg = lb.querySelector('#lb-img');
     let currentEventImages = [];
@@ -268,7 +269,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <img src="${imageSrc(evt.folder, 'main.jpeg')}" alt="${evt.title} cover">
                 <span class="event-card-overlay">
                     <strong>${evt.title}</strong>
-                    <small>${evt.media.length} items</small>
+                   
                 </span>
             `;
             eventGallery.appendChild(card);
@@ -349,6 +350,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         eventLoading.classList.remove('show');
         eventMeta.textContent = `${evt.media.length} items loaded (${currentEventImages.length} photos${evt.media.length > currentEventImages.length ? ', includes video' : ''})`;
+    }
+
+    if (staffPhotoImage) {
+        staffPhotoImage.style.cursor = 'zoom-in';
+        staffPhotoImage.addEventListener('click', () => {
+            currentEventImages = [staffPhotoImage];
+            openLightbox(0);
+        });
     }
 
     if (eventGallery && eventViewer) {
