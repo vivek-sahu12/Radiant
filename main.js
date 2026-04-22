@@ -208,7 +208,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     /* ============================================
-       8. GALLERY — Lightbox on click
+       8. EVENT GALLERY — On-demand image loading
        ============================================ */
     function buildLightbox() {
         const lb = document.createElement('div');
@@ -225,44 +225,167 @@ document.addEventListener('DOMContentLoaded', () => {
         return lb;
     }
 
-    const galleryItems = Array.from(document.querySelectorAll('.gallery-item img'));
-    if (galleryItems.length) {
-        const lb     = buildLightbox();
-        const lbImg  = lb.querySelector('#lb-img');
-        let   current = 0;
+    const galleryEvents = [
+        { title: 'Deepawali Celebration', folder: 'Deepawali Celebration', media: ['main.jpeg', '1.jpeg', '2.jpeg', '3.jpeg', '4.jpeg', '5.jpeg', '6.jpeg', '7.jpeg', '8.jpeg', '9.jpeg', '10.jpeg', '11.jpeg', '12.jpeg', '13.jpeg'] },
+        { title: 'Ganesh Sthapna', folder: 'Ganesh Sthapna', media: ['main.jpeg', '1.jpeg', '2.jpeg', '3.jpeg', '4.jpeg'] },
+        { title: 'Green Day Celebration', folder: 'Green Day Celebration', media: ['main.jpeg', '1.jpeg', '2.jpeg', '3.jpeg', '4.jpeg', '5.jpeg', '6.jpeg', '7.jpeg'] },
+        { title: 'Guru Poornima', folder: 'Guru Poornima', media: ['main.jpeg', '1.jpeg', '2.mp4'] },
+        { title: 'Holi Celebration 25-26', folder: 'Holi Celebration 25-26', media: ['main.jpeg', '1.jpeg', '2.jpeg', '3.jpeg', '4.jpeg', '5.jpeg', '6.jpeg', '7.jpeg'] },
+        { title: 'Janmashthmi Celebration', folder: 'Janmashthmi Celebration', media: ['main.jpeg', '1.jpeg', '2.jpeg', '3.jpeg', '4.jpeg', '5.jpeg', '6.jpeg', '7.jpeg', '8.jpeg', '9.jpeg', '10.jpeg'] },
+        { title: 'Navratri Garba Celebration', folder: 'Navratri Garba Celebration', media: ['main.jpeg', '1.jpeg', '2.jpeg', '3.jpeg', '4.jpeg', '5.jpeg', '6.jpeg', '7.mp4'] },
+        { title: 'Republic Day', folder: 'Republic Day', media: ['main.jpeg', '1.jpeg', '2.jpeg', '3.jpeg'] },
+        { title: 'Sport Day 25-26', folder: 'Sport Day 25-26', media: ['main.jpeg', '1.jpeg', '2.jpeg', '3.jpeg', '4.jpeg', '5.jpeg', '6.jpeg', '7.jpeg'] }
+    ];
 
-        function openLightbox(idx) {
-            current = idx;
-            lbImg.src = galleryItems[idx].src;
-            lbImg.alt = galleryItems[idx].alt;
-            lb.classList.add('open');
-            document.body.style.overflow = 'hidden';
-        }
+    const eventGallery = document.getElementById('event-gallery');
+    const eventViewer = document.getElementById('event-viewer');
+    const eventViewerOverlay = document.querySelector('.event-viewer-overlay');
+    const eventViewerClose = document.querySelector('.event-viewer-close');
+    const eventTitle = document.getElementById('event-title');
+    const eventMeta = document.getElementById('event-meta');
+    const eventLoading = document.getElementById('event-loading');
+    const eventImagesGrid = document.getElementById('event-images');
+    const lb = buildLightbox();
+    const lbImg = lb.querySelector('#lb-img');
+    let currentEventImages = [];
+    let currentLightboxIndex = 0;
 
-        function closeLightbox() {
-            lb.classList.remove('open');
-            document.body.style.overflow = '';
-        }
+    function imageSrc(folder, file) {
+        return `Photo Gallery/${folder}/${file}`;
+    }
 
-        galleryItems.forEach((img, i) => {
-            img.parentElement.style.cursor = 'pointer';
-            img.parentElement.addEventListener('click', () => openLightbox(i));
+    function renderEventCovers() {
+        if (!eventGallery) return;
+        eventGallery.innerHTML = '';
+
+        galleryEvents.forEach((evt, idx) => {
+            const card = document.createElement('button');
+            card.className = 'event-card';
+            card.type = 'button';
+            card.setAttribute('aria-label', `Open ${evt.title} gallery`);
+            card.dataset.eventIndex = String(idx);
+            card.innerHTML = `
+                <img src="${imageSrc(evt.folder, 'main.jpeg')}" alt="${evt.title} cover">
+                <span class="event-card-overlay">
+                    <strong>${evt.title}</strong>
+                    <small>${evt.media.length} items</small>
+                </span>
+            `;
+            eventGallery.appendChild(card);
         });
+    }
+
+    function openLightbox(index) {
+        if (!currentEventImages.length) return;
+        currentLightboxIndex = index;
+        lbImg.src = currentEventImages[currentLightboxIndex].src;
+        lbImg.alt = currentEventImages[currentLightboxIndex].alt;
+        lb.classList.add('open');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeLightbox() {
+        lb.classList.remove('open');
+        document.body.style.overflow = eventViewer && eventViewer.classList.contains('open') ? 'hidden' : '';
+    }
+
+    function closeEventViewer() {
+        if (!eventViewer) return;
+        eventViewer.classList.remove('open');
+        eventViewer.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+    }
+
+    async function loadEventImages(evt) {
+        if (!eventViewer || !eventImagesGrid || !eventLoading) return;
+
+        eventTitle.textContent = evt.title;
+        eventMeta.textContent = 'Preparing gallery...';
+        eventImagesGrid.innerHTML = '';
+        eventLoading.classList.add('show');
+        eventViewer.classList.add('open');
+        eventViewer.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+
+        currentEventImages = [];
+        let loadedItems = 0;
+        let imageIndex = 0;
+
+        for (let i = 0; i < evt.media.length; i += 1) {
+            const file = evt.media[i];
+            const isVideo = file.toLowerCase().endsWith('.mp4');
+            const mediaPath = imageSrc(evt.folder, file);
+
+            if (isVideo) {
+                const videoCard = document.createElement('div');
+                videoCard.className = 'event-video';
+                const video = document.createElement('video');
+                video.controls = true;
+                video.preload = 'metadata';
+                video.playsInline = true;
+                video.src = mediaPath;
+                videoCard.appendChild(video);
+                eventImagesGrid.appendChild(videoCard);
+            } else {
+                const card = document.createElement('button');
+                card.className = 'event-image';
+                card.type = 'button';
+                card.setAttribute('aria-label', `Open image ${imageIndex + 1} from ${evt.title}`);
+
+                const img = new Image();
+                img.alt = `${evt.title} photo ${imageIndex + 1}`;
+                img.src = mediaPath;
+
+                const lightboxIndex = imageIndex;
+                card.appendChild(img);
+                card.addEventListener('click', () => openLightbox(lightboxIndex));
+                eventImagesGrid.appendChild(card);
+                currentEventImages.push(img);
+                imageIndex += 1;
+            }
+
+            loadedItems += 1;
+            eventMeta.textContent = `Loaded ${loadedItems} of ${evt.media.length} items`;
+        }
+        eventLoading.classList.remove('show');
+        eventMeta.textContent = `${evt.media.length} items loaded (${currentEventImages.length} photos${evt.media.length > currentEventImages.length ? ', includes video' : ''})`;
+    }
+
+    if (eventGallery && eventViewer) {
+        renderEventCovers();
+        eventGallery.addEventListener('click', (e) => {
+            const card = e.target.closest('.event-card');
+            if (!card) return;
+            const idx = Number(card.dataset.eventIndex);
+            const selectedEvent = galleryEvents[idx];
+            if (!selectedEvent) return;
+            loadEventImages(selectedEvent);
+        });
+
+        eventViewerClose.addEventListener('click', closeEventViewer);
+        eventViewerOverlay.addEventListener('click', closeEventViewer);
 
         lb.querySelector('.lb-close').addEventListener('click', closeLightbox);
         lb.querySelector('.lb-overlay').addEventListener('click', closeLightbox);
         lb.querySelector('.lb-prev').addEventListener('click', () => {
-            openLightbox((current - 1 + galleryItems.length) % galleryItems.length);
+            if (!currentEventImages.length) return;
+            openLightbox((currentLightboxIndex - 1 + currentEventImages.length) % currentEventImages.length);
         });
         lb.querySelector('.lb-next').addEventListener('click', () => {
-            openLightbox((current + 1) % galleryItems.length);
+            if (!currentEventImages.length) return;
+            openLightbox((currentLightboxIndex + 1) % currentEventImages.length);
         });
 
-        document.addEventListener('keydown', e => {
-            if (!lb.classList.contains('open')) return;
-            if (e.key === 'Escape')      closeLightbox();
-            if (e.key === 'ArrowLeft')   lb.querySelector('.lb-prev').click();
-            if (e.key === 'ArrowRight')  lb.querySelector('.lb-next').click();
+        document.addEventListener('keydown', (e) => {
+            if (lb.classList.contains('open')) {
+                if (e.key === 'Escape') closeLightbox();
+                if (e.key === 'ArrowLeft') lb.querySelector('.lb-prev').click();
+                if (e.key === 'ArrowRight') lb.querySelector('.lb-next').click();
+                return;
+            }
+            if (eventViewer.classList.contains('open') && e.key === 'Escape') {
+                closeEventViewer();
+            }
         });
     }
 
