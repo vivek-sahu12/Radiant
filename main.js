@@ -28,20 +28,21 @@ document.addEventListener('DOMContentLoaded', () => {
        ============================================ */
     const hamburger = document.getElementById('hamburger-menu');
     const navList   = document.getElementById('nav-list');
+    const navBackdrop = document.getElementById('nav-backdrop');
+    const navbar = document.getElementById('navbar');
 
     function setMenuState(isOpen) {
         if (!hamburger || !navList) return;
         navList.classList.toggle('active', isOpen);
+        navBackdrop?.classList.toggle('active', isOpen);
         document.body.classList.toggle('menu-open', isOpen);
+        navbar?.classList.toggle('menu-open', isOpen);
         hamburger.setAttribute('aria-expanded', String(isOpen));
+        navList.setAttribute('aria-hidden', String(!isOpen));
 
         const icon = hamburger.querySelector('i');
         if (!icon) return;
-        if (isOpen) {
-            icon.classList.replace('fa-bars', 'fa-times');
-        } else {
-            icon.classList.replace('fa-times', 'fa-bars');
-        }
+        icon.className = isOpen ? 'fas fa-times' : 'fas fa-bars';
     }
 
     if (hamburger && navList) {
@@ -56,6 +57,10 @@ document.addEventListener('DOMContentLoaded', () => {
         link.addEventListener('click', () => {
             setMenuState(false);
         });
+    });
+
+    navBackdrop?.addEventListener('click', () => {
+        setMenuState(false);
     });
 
     window.addEventListener('resize', () => {
@@ -74,7 +79,6 @@ document.addEventListener('DOMContentLoaded', () => {
     /* ============================================
        3. NAVBAR — transparent → frosted glass
        ============================================ */
-    const navbar   = document.getElementById('navbar');
     const sections = document.querySelectorAll('section[id]');
     const navLinks = document.querySelectorAll('.nav-link');
 
