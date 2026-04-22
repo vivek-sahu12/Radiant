@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
        2. MOBILE MENU TOGGLE
        ============================================ */
     const hamburger = document.getElementById('hamburger-menu');
-    const navList   = document.getElementById('nav-list');
+    const navList = document.getElementById('nav-list');
     const navBackdrop = document.getElementById('nav-backdrop');
     const navbar = document.getElementById('navbar');
 
@@ -238,7 +238,8 @@ document.addEventListener('DOMContentLoaded', () => {
         { title: 'Holi Celebration 25-26', folder: 'Holi Celebration 25-26', media: ['main.jpeg', '1.jpeg', '2.jpeg', '3.jpeg', '4.jpeg', '5.jpeg', '6.jpeg', '7.jpeg'] },
         { title: 'Janmashthmi Celebration', folder: 'Janmashthmi Celebration', media: ['main.jpeg', '1.jpeg', '2.jpeg', '3.jpeg', '4.jpeg', '5.jpeg', '6.jpeg', '7.jpeg', '8.jpeg', '9.jpeg', '10.jpeg'] },
         { title: 'Navratri Garba Celebration', folder: 'Navratri Garba Celebration', media: ['main.jpeg', '1.jpeg', '2.jpeg', '3.jpeg', '4.jpeg', '5.jpeg', '6.jpeg', '7.mp4'] },
-        { title: 'Republic Day', folder: 'Republic Day', media: ['main.jpeg', '1.jpeg', '2.jpeg', '3.jpeg'] }
+        { title: 'Republic Day', folder: 'Republic Day', media: ['main.jpeg', '1.jpeg', '2.jpeg', '3.jpeg'] },
+        { title: 'Board Result 2025-26', folder: 'Board Result 2025-26', media: ['main.jpeg', '1.jpeg', '2.jpeg', '3.jpeg', '4.jpeg'] }
     ];
 
     const eventGallery = document.getElementById('event-gallery');
