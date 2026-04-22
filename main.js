@@ -34,15 +34,37 @@ document.addEventListener('DOMContentLoaded', () => {
     function setMenuState(isOpen) {
         if (!hamburger || !navList) return;
         navList.classList.toggle('active', isOpen);
-        navBackdrop?.classList.toggle('active', isOpen);
+        if (navBackdrop) {
+            navBackdrop.classList.toggle('active', isOpen);
+        }
         document.body.classList.toggle('menu-open', isOpen);
-        navbar?.classList.toggle('menu-open', isOpen);
+        if (navbar) {
+            navbar.classList.toggle('menu-open', isOpen);
+        }
         hamburger.setAttribute('aria-expanded', String(isOpen));
         navList.setAttribute('aria-hidden', String(!isOpen));
 
         const icon = hamburger.querySelector('i');
         if (!icon) return;
         icon.className = isOpen ? 'fas fa-times' : 'fas fa-bars';
+    }
+
+    function scrollToSection(target, targetId) {
+        if (!target) return;
+        const headerH = navbar ? navbar.offsetHeight : 80;
+        const top = target.getBoundingClientRect().top + window.pageYOffset - headerH;
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        if (prefersReducedMotion) {
+            window.scrollTo(0, top);
+        } else {
+            window.scrollTo({ top, behavior: 'smooth' });
+        }
+
+        // Keep URL hash in sync without jump.
+        if (targetId && targetId.startsWith('#') && history.replaceState) {
+            history.replaceState(null, '', targetId);
+        }
     }
 
     if (hamburger && navList) {
@@ -52,16 +74,44 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Close menu when a link is clicked (mobile)
+    // Nav links: close menu first, then smooth-scroll (mobile-safe).
     document.querySelectorAll('.nav-link').forEach(link => {
-        link.addEventListener('click', () => {
+        link.addEventListener('click', (e) => {
+            const targetId = link.getAttribute('href');
+            if (!targetId || !targetId.startsWith('#') || targetId === '#') {
+                setMenuState(false);
+                return;
+            }
+
+            const target = document.querySelector(targetId);
+            if (!target) {
+                setMenuState(false);
+                return;
+            }
+
+            e.preventDefault();
+            const isMobileMenuOpen = window.innerWidth <= 768 && navList.classList.contains('active');
             setMenuState(false);
+
+            if (isMobileMenuOpen) {
+                // Match nav transition duration so close animation finishes before scroll.
+                window.setTimeout(() => {
+                    scrollToSection(target, targetId);
+                }, 320);
+                return;
+            }
+
+            window.requestAnimationFrame(() => {
+                scrollToSection(target, targetId);
+            });
         });
     });
 
-    navBackdrop?.addEventListener('click', () => {
-        setMenuState(false);
-    });
+    if (navBackdrop) {
+        navBackdrop.addEventListener('click', () => {
+            setMenuState(false);
+        });
+    }
 
     window.addEventListener('resize', () => {
         if (window.innerWidth > 768) {
@@ -111,18 +161,14 @@ document.addEventListener('DOMContentLoaded', () => {
     /* ============================================
        4. SMOOTH SCROLL with header offset
        ============================================ */
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    document.querySelectorAll('a[href^="#"]:not(.nav-link)').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
             const targetId = this.getAttribute('href');
             if (!targetId || targetId === '#') return;
             const target = document.querySelector(targetId);
             if (!target) return;
             e.preventDefault();
-
-            const headerH = navbar ? navbar.offsetHeight : 80;
-            const top = target.getBoundingClientRect().top + window.pageYOffset - headerH;
-
-            window.scrollTo({ top, behavior: 'smooth' });
+            scrollToSection(target, targetId);
         });
     });
 
