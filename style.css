@@ -1067,23 +1067,27 @@ img {
 
 .about-image-badge {
   position: absolute;
-  left: 1rem;
-  bottom: 1rem;
-  right: 1rem;
+  left: 0.5rem;
+  bottom: 0.5rem;
+  right: 2rem;
   background: rgba(15, 23, 42, 0.85);
   color: var(--bg-white);
   border-radius: 12px;
-  padding: 0.8rem 1rem;
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
+  padding: 0.5rem 1rem;
+  display: inline;
+  align-items: center;
+  /* justify-content: space-between; */
   gap: 1rem;
+  width: 20rem;
+  height: 3rem;
+
 }
 
 .about-image-badge .badge-number {
   font-family: var(--font-heading);
   font-size: 1.8rem;
   line-height: 1;
+
 
 }
 

@@ -119,7 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             e.preventDefault();
             const shouldDelayScroll = isMobileView() && navList && navList.classList.contains('active');
-            
+
             if (shouldDelayScroll) {
                 closeMenu();
                 // Wait for the menu transition to finish before scrolling for a smoother experience
@@ -318,7 +318,8 @@ document.addEventListener('DOMContentLoaded', () => {
         { title: 'Janmashthmi Celebration', folder: 'Janmashthmi Celebration', media: ['main.jpeg', '1.jpeg', '2.jpeg', '3.jpeg', '4.jpeg', '5.jpeg', '6.jpeg', '7.jpeg', '8.jpeg', '9.jpeg', '10.jpeg'] },
         { title: 'Navratri Garba Celebration', folder: 'Navratri Garba Celebration', media: ['main.jpeg', '1.jpeg', '2.jpeg', '3.jpeg', '4.jpeg', '5.jpeg', '6.jpeg', '7.mp4'] },
         { title: 'Republic Day', folder: 'Republic Day', media: ['main.jpeg', '1.jpeg', '2.jpeg', '3.jpeg'] },
-        { title: 'Board Result 2025-26', folder: 'Board Result 2025-26', media: ['main.jpeg', '1.jpeg', '2.jpeg', '3.jpeg', '4.jpeg'] }
+        { title: 'Board Result 2025-26', folder: 'Board Result 2025-26', media: ['main.jpeg', '1.jpeg', '2.jpeg', '3.jpeg', '4.jpeg'] },
+        { title: 'Our KG Section', folder: 'Our KG Section', media: ['main.jpeg', '1.jpeg', '2.jpeg', '3.jpeg', '4.jpeg', '5.jpeg', '6.jpeg', '7.jpeg', '8.jpeg', '9.jpeg'] }
     ];
 
     const eventGallery = document.getElementById('event-gallery');
